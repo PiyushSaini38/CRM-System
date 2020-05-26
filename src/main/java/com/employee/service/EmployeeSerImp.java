@@ -1,39 +1,45 @@
 package com.employee.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.employee.DAO.EmpDAO;
+import com.employee.DAO.EmployeeRepository;
 import com.employee.entities.Employee;
 
 @Service
-@Transactional
 public class EmployeeSerImp implements EmployeeService {
 
 	@Autowired
-	private EmpDAO employeeDao;
+	private EmployeeRepository employeeRepository;
 
 	@Override
 	public List<Employee> getEmployees() {
-		return employeeDao.getEmployees();
+		return employeeRepository.findAll();
 	}
 
 	@Override
 	public Employee findById(int id) {
-		return employeeDao.findById(id);
+		Optional<Employee> result = employeeRepository.findById(id); // used optional for checking null
+		Employee employee = null;
+		if (result.isPresent()) {
+			employee = result.get();
+		} else {
+			throw new RuntimeException("Didn't find employee");
+		}
+		return employee;
 	}
 
 	@Override
 	public void save(Employee employee) {
-		employeeDao.save(employee);
+		employeeRepository.save(employee);
 	}
 
 	@Override
 	public void delete(int id) {
-		employeeDao.delete(id);
+		employeeRepository.deleteById(id);
 	}
 
 }
